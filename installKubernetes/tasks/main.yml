@@ -1,0 +1,39 @@
+---
+    - name: set the swap off
+      shell:
+        cmd: swapoff -a
+
+    - name: switch nftables to iptables 
+      shell:
+        cmd: "{{ item }}"
+      loop:
+        - update-alternatives --set iptables /usr/sbin/iptables-legacy
+        - update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+
+    - name: add Kubernetes apt-key
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+
+    - name: add Kubernetes' APT repository
+      apt_repository:
+        repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+        state: present
+        filename: 'kubernetes'
+
+    - name: install kubelet
+      apt:
+        name: kubelet=1.23.0-00
+        state: present
+        update_cache: true
+
+    - name: install kubeadm
+      apt:
+        name: kubeadm=1.23.0-00
+        state: present
+
+    - name: install kubectl
+      apt:
+        name: kubectl=1.23.0-00
+        state: present
+        force: yes

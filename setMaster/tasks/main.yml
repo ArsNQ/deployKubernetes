@@ -1,0 +1,26 @@
+---
+    - name: initialize the cluster with standard Flannel subnet
+      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-cert-extra-sans=ec2-54-86-154-17.compute-1.amazonaws.com --ignore-preflight-errors=all >> cluster_initialized.txt
+      args:
+        creates: cluster_initialized.txt
+
+    - name: Create config.
+      shell: |
+              mkdir -p $HOME/.kube
+              sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+              sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+    - name: Create config.
+      shell: export KUBECONFIG=/etc/kubernetes/admin.conf
+              
+    - name: create .kube directory
+      file:
+        path: /home/ansible/.kube/config
+        state: directory
+        mode: 0755
+
+    - name: install Pod network
+      shell: sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml >> flannel_pod_network_setup.txt
+      args:
+        chdir: $HOME
+        creates: flannel_pod_network_setup.txt

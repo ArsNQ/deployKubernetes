@@ -1,0 +1,13 @@
+[all]
+kubernetes
+kubernetes-node-01
+kubernetes-node-02
+kubernetes-node-03
+
+[k8sMasters]
+kubernetes ansible_user=<user> ansible_host=<ip_address>
+
+[k8sWorkers]
+kubernetes-node-01 ansible_user=<user> ansible_host=<ip_address>
+kubernetes-node-02 ansible_user=<user> ansible_host=<ip_address>
+kubernetes-node-03 ansible_user=<user> ansible_host=<ip_address>
