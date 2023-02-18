@@ -1,30 +1,30 @@
 ---
-    - name: apt-get update
-      shell: apt-get update
-    
-    - name: install packages with apt
-      apt:
-        name: "{{ item }}"
-        state: present
-      with_items:
-        - apt-transport-https
-        - gnupg2
-        - ca-certificates
-        - software-properties-common
+- name: apt-get update
+  shell: apt-get update
 
-    - name: add apt-key for Docker
-      apt_key:
-        url: https://download.docker.com/linux/debian/gpg
-        state: present
+- name: install packages with apt
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - apt-transport-https
+    - gnupg2
+    - ca-certificates
+    - software-properties-common
 
-    - name: add apt repo for Docker
-      apt_repository:
-        repo: deb https://download.docker.com/linux/debian buster stable
-        state: present
-        filename: 'docker'
+- name: add apt-key for Docker
+  apt_key:
+    url: https://download.docker.com/linux/debian/gpg
+    state: present
 
-    - name: install Docker
-      apt:
-        name: docker-ce
-        state: present
-        update_cache: true
+- name: add apt repo for Docker
+  apt_repository:
+    repo: deb https://download.docker.com/linux/debian buster stable
+    state: present
+    filename: 'docker'
+
+- name: install Docker
+  apt:
+    name: docker-ce
+    state: present
+    update_cache: true

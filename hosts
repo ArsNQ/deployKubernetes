@@ -1,13 +1,11 @@
 [all]
-kubernetes
-kubernetes-node-01
-kubernetes-node-02
-kubernetes-node-03
+vm-k8s-master-0
+vm-k8s-worker-1
+vm-k8s-worker-2
 
 [k8sMasters]
-kubernetes ansible_user=<user> ansible_host=<ip_address>
+vm-k8s-master-0 ansible_user=adminazure ansible_host=
 
 [k8sWorkers]
-kubernetes-node-01 ansible_user=<user> ansible_host=<ip_address>
-kubernetes-node-02 ansible_user=<user> ansible_host=<ip_address>
-kubernetes-node-03 ansible_user=<user> ansible_host=<ip_address>
+vm-k8s-worker-1 ansible_user=adminazure ansible_host=
+vm-k8s-worker-2 ansible_user=adminazure ansible_host=

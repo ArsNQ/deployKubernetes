@@ -28,3 +28,5 @@ ansible-playbook -i hosts playbook.yml
 ├── setMaster
 └── setWorkers
 ```
+
+# version 1.0.1
