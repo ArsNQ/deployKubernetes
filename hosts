@@ -1,11 +1,9 @@
 [all]
-vm-k8s-master-0
-vm-k8s-worker-1
-vm-k8s-worker-2
+kubernetes-master-00
+kubernetes-worker-00
 
 [k8sMasters]
-vm-k8s-master-0 ansible_user=adminazure ansible_host=
+kubernetes-master-00 ansible_user= ansible_host=
 
 [k8sWorkers]
-vm-k8s-worker-1 ansible_user=adminazure ansible_host=
-vm-k8s-worker-2 ansible_user=adminazure ansible_host=
+kubernetes-worker-00 ansible_user= ansible_host=
