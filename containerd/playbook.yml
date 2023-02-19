@@ -1,0 +1,39 @@
+# Kubernetes role
+- hosts: "k8sMasters, k8sWorkers"
+  become: yes
+  become_method: sudo
+  become_user: root
+  gather_facts: yes
+  connection: ssh
+  roles:
+    - installKubernetes
+
+# containerd role
+- hosts: "k8sMasters, k8sWorkers"
+  become: yes
+  become_method: sudo
+  become_user: root
+  gather_facts: yes
+  connection: ssh
+  roles:
+    - installContainerd
+
+# master role
+- hosts: k8sMasters
+  become: yes
+  become_method: sudo
+  become_user: root
+  gather_facts: yes
+  connection: ssh
+  roles:
+    - setupMaster
+
+# workers role
+- hosts: k8sWorkers
+  become: yes
+  become_method: sudo
+  become_user: root
+  gather_facts: yes
+  connection: ssh
+  roles:
+    - setupWorkers

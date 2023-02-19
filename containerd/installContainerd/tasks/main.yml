@@ -1,0 +1,62 @@
+---
+# tasks file for installContainerd
+- name: Load kernel modules.
+  shell:
+    cmd: |
+      sudo tee /etc/modules-load.d/containerd.conf <<EOF
+      overlay
+      br_netfilter
+      EOF
+  changed_when: false
+
+- name: Load overlay and br_netfilter kernel modules.
+  shell:
+    cmd: |
+      sudo modprobe overlay
+      sudo modprobe br_netfilter
+
+- name: Configure sysctl.
+  shell:
+    cmd: |
+      sudo tee /etc/sysctl.d/kubernetes.conf <<EOF
+      net.bridge.bridge-nf-call-ip6tables = 1
+      net.bridge.bridge-nf-call-iptables = 1
+      net.ipv4.ip_forward = 1
+      EOF
+  changed_when: false
+
+- name: Load sysctl settings.
+  command: sysctl --system
+
+- name: Add Docker GPG key.
+  shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+- name: Add Docker repository.
+  shell: sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+- name: Update apt package cache.
+  apt:
+    update_cache: yes
+
+- name: Install containerd.
+  apt:
+    name: containerd.io
+    state: present
+
+- name: Create /etc/containerd directory.
+  file:
+    path: /etc/containerd
+    state: directory
+
+- name: Configure containerd.
+  shell: containerd config default>/etc/containerd/config.toml
+
+- name: Restart containerd service.
+  systemd:
+    name: containerd
+    state: restarted
+
+- name: Enable containerd service.
+  systemd:
+    name: containerd
+    enabled: yes

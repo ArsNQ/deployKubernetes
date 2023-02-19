@@ -1,0 +1,11 @@
+[all]
+kubernetes-master-00
+kubernetes-worker-00
+kubernetes-worker-01
+
+[k8sMasters]
+kubernetes-master-00 ansible_user=ubuntu ansible_host=34.171.75.186
+
+[k8sWorkers]
+kubernetes-worker-00 ansible_user=ubuntu ansible_host=34.132.226.226
+kubernetes-worker-01 ansible_user=ubuntu ansible_host=35.238.10.158
