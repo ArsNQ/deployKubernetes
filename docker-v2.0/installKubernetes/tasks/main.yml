@@ -1,0 +1,71 @@
+---
+# tasks file for installKubernetes
+- name: Update apt package cache
+  apt:
+    update_cache: yes
+
+- name: Upgrade all packages
+  apt:
+    upgrade: yes
+    autoremove: yes
+
+- name: Reboot if required
+  shell: |
+    [ -f /var/run/reboot-required ] && sudo reboot -f
+  async: 1
+  poll: 0
+  ignore_errors: yes
+
+- name: Install required packages
+  apt:
+    name:
+      - vim
+      - git
+      - curl
+      - apt-transport-https
+      - gnupg2
+      - software-properties-common
+      - ca-certificates
+    state: present
+
+- name: Add Google Cloud apt repository key
+  shell: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+
+- name: Add Kubernetes apt repository
+  shell: echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+- name: Update apt package cache
+  apt:
+    update_cache: yes
+
+- name: install kubelet, kubeadm, kubectl.
+  apt:
+    name:
+    - kubelet=1.23.0-00
+    - kubeadm=1.23.0-00
+    - kubectl=1.23.0-00
+    state: present
+
+- name: mark kubelet, kubeadm, and kubectl.
+  shell: sudo apt-mark hold kubelet kubeadm kubectl
+
+- name: Disable swap and mount filesystems
+  shell: |
+    sudo swapoff -a
+    sudo mount -a
+
+- name: Load kernel modules
+  shell: |
+    sudo modprobe overlay
+    sudo modprobe br_netfilter
+
+- name: Configure sysctl for Kubernetes
+  shell: |
+    sudo tee /etc/sysctl.d/kubernetes.conf <<EOF
+    net.bridge.bridge-nf-xcall-ip6tables = 1
+    net.bridge.bridge-nf-call-iptables = 1
+    net.ipv4.ip_forward = 1
+    EOF
+
+- name: Reload sysctl
+  shell: sudo sysctl --system

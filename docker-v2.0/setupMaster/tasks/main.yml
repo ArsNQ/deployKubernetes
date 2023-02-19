@@ -1,0 +1,31 @@
+---
+# tasks file for setupMaster
+- name: Enable kubelet service
+  systemd:
+    name: kubelet
+    enabled: yes
+
+- name: Pull Kubernetes container images with kubeadm
+  shell: sudo kubeadm config images pull --cri-socket unix:///run/cri-dockerd.sock
+
+- name: initialize the cluster with standard Flannel subnet
+  shell: kubeadm init --pod-network-cidr=10.244.0.0/16 \
+         --apiserver-cert-extra-sans= \
+         --ignore-preflight-errors=all
+
+- name: Configure kubectl
+  shell: |
+    mkdir -p $HOME/.kube
+    sudo cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
+    sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+- name: install Pod network
+  shell: sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+- name: Generate join command
+  command: kubeadm token create --print-join-command
+  register: join_command
+
+- name: Copy join command to local file
+  become: false
+  local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"

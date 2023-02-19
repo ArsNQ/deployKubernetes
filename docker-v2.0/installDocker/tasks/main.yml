@@ -1,0 +1,59 @@
+---
+# tasks file for installDocker
+- name: Add Docker GPG key.
+  shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+- name: Add Docker repository.
+  shell: sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+- name: Update apt package cache.
+  apt:
+    update_cache: yes
+
+- name: install kubelet, kubeadm, kubectl.
+  apt:
+    name:
+      - containerd.io
+      - docker-ce
+      - docker-ce-cli
+    state: present
+
+- name: Create required directories.
+  shell: sudo mkdir -p /etc/systemd/system/docker.service.d
+
+- name: Load kernel modules.
+  shell:
+    cmd: |
+      sudo tee /etc/modules-load.d/containerd.conf <<EOF
+      overlay
+      br_netfilter
+      EOF
+  changed_when: false
+
+- name: Create daemon.json file
+  copy:
+    content: |
+      {
+        "exec-opts": ["native.cgroupdriver=systemd"],
+        "log-driver": "json-file",
+        "log-opts": {
+          "max-size": "100m"
+        },
+        "storage-driver": "overlay2"
+      }
+    dest: /etc/docker/daemon.json
+
+- name: Reload systemd configuration
+  systemd:
+    daemon_reload: yes
+
+- name: Restart Docker service
+  systemd:
+    name: docker
+    state: restarted
+    enabled: yes
+
+- name: Enable Docker service
+  systemd:
+    name: docker
+    enabled: yes
