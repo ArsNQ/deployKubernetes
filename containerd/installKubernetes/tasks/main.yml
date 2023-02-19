@@ -68,8 +68,4 @@
     EOF
 
 - name: Reload sysctl
-  command: sysctl --system
-  async: 0
-  poll: 0
-  ignore_errors: yes
-  changed_when: falses
+  shell: sudo sysctl --system
