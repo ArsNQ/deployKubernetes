@@ -1,11 +1,5 @@
-[all]
-kubernetes-master-00
-kubernetes-worker-00
-kubernetes-worker-01
-
 [k8sMasters]
-kubernetes-master-00 ansible_user= ansible_host=
-
+kubernetes-master-00 ansible_host= ansible_user=
 [k8sWorkers]
-kubernetes-worker-00 ansible_user= ansible_host=
-kubernetes-worker-01 ansible_user= ansible_host=
+kubernetes-worker-00 ansible_host= ansible_user=
+kubernetes-worker-01 ansible_host= ansible_user=

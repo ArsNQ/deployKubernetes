@@ -10,7 +10,7 @@
 
 - name: initialize the cluster with standard Flannel subnet
   shell: kubeadm init --pod-network-cidr=10.244.0.0/16 \
-         --apiserver-cert-extra-sans= \
+         --apiserver-cert-extra-sans={{ip_master}} \
          --ignore-preflight-errors=all
 
 - name: Configure kubectl
